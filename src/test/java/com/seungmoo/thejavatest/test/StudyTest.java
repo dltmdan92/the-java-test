@@ -4,6 +4,10 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// 클래스 내 모든 메소드에 displayName 생성 strategy를 적용한다.
+// ReplaceUnderscores.class : underscore를 공백으로
+// 이거 보다는 @DisplayName 방식을 추천한다.
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
     /**
@@ -11,15 +15,17 @@ class StudyTest {
      * reflection을 사용하기 때문에 굳이 public이 필요없기 때문이다.
      */
     @Test
-    void create() {
+    @DisplayName("스터디 만들기 \uD83D\uDE31") // 메소드에 DisplayName을 직접 설정 가능하다.
+    void create_new_study() {
         Study study = new Study();
         assertNotNull(study);
         System.out.println("create");
     }
 
     @Test
-    @Disabled // disable 처리
-    void create1() {
+    //@Disabled // disable 처리
+    @DisplayName("스터기 또 만들기 ╯°□°）╯")
+    void create_new_study_again() {
         System.out.println("create1");
     }
 
