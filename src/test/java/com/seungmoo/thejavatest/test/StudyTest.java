@@ -22,6 +22,7 @@ class StudyTest {
      */
     @Test
     @DisplayName("스터디 만들기 \uD83D\uDE31") // 메소드에 DisplayName을 직접 설정 가능하다.
+    @Tag("slow")
     void create_new_study() {
 
         Study study = new Study(10);
@@ -75,6 +76,7 @@ class StudyTest {
     @Test
     //@Disabled // disable 처리
     @DisplayName("스터기 또 만들기 ╯°□°）╯")
+    @Tag("slow")
     void create_new_study_again() {
         // System 통해서 환경 변수 꺼내기
         String test_env = System.getenv("TEST_ENV");
@@ -104,6 +106,7 @@ class StudyTest {
     @EnabledOnOs({OS.WINDOWS, OS.LINUX, OS.WINDOWS}) // 맥, 윈도우, 리눅스에서 활성화
     @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_9, JRE.JAVA_10, JRE.JAVA_11}) // 자바 버전 별 enable 처리
     @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
+    @Tag("slow")
     void create_new_study_again2() {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
@@ -119,6 +122,7 @@ class StudyTest {
     @EnabledOnOs(OS.OTHER)
     @EnabledOnJre(JRE.OTHER)
     @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "seungmoo")
+    @Tag("slow")
     void do_not_run() {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
@@ -126,6 +130,29 @@ class StudyTest {
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
 
+    /**
+     * intellij 에서 edit configuration에서 tags에 실행할 tag name을 셋팅해주면
+     * 그것만 실행해준다.
+     */
+    @Test
+    @DisplayName("스터디 만들기 with fast tag")
+    @Tag("fast") // 태깅
+    void create_new_study_with_fast_tag() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        Study actual = new Study(100);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("스터디 만들기 with slow tag")
+    @Tag("slow") // 태깅
+    void create_new_study_with_slow_tag() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        Study actual = new Study(100);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
 
     /**
      * @BeforeAll 클래스 안에 있는 테스트가 실행되기 전에 딱 한번 실행

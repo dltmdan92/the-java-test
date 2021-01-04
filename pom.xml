@@ -40,4 +40,43 @@
         </plugins>
     </build>
 
+    <profiles>
+        <!-- mvn build 시, fast tag만 테스트 실행 한다. -->
+        <profile>
+            <id>default</id>
+            <!-- 디폴트 모드 -->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <groups>fast</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+        profile "ci" mode에서는 fast와 slow 모두 실행한다.
+        mvn test -P ci
+        -->
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <groups>fast | slow</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
