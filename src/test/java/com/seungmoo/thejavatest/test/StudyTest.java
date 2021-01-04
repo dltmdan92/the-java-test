@@ -1,10 +1,14 @@
 package com.seungmoo.thejavatest.test;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 import java.time.Duration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 // 클래스 내 모든 메소드에 displayName 생성 strategy를 적용한다.
 // ReplaceUnderscores.class : underscore를 공백으로
@@ -72,8 +76,56 @@ class StudyTest {
     //@Disabled // disable 처리
     @DisplayName("스터기 또 만들기 ╯°□°）╯")
     void create_new_study_again() {
+        // System 통해서 환경 변수 꺼내기
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        // 여기서 test 실패할 경우 아래 assert는 실행이 안되고 Test가 끝난다.
+        assumeTrue("LOCAL".equalsIgnoreCase(test_env));
+
+        assumingThat("LOCAL".equalsIgnoreCase(test_env), () -> {
+            System.out.println("local");
+            Study actual = new Study(100);
+            assertThat(actual.getLimit()).isGreaterThan(0);
+        });
+
+        assumingThat("seungmoo".equalsIgnoreCase(test_env), () -> {
+            System.out.println("seungmoo");
+            Study actual = new Study(10);
+            assertThat(actual.getLimit()).isGreaterThan(0);
+        });
+
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
         System.out.println("create1");
     }
+
+    @Test
+    @DisplayName("환경 별 enable 처리")
+    @EnabledOnOs({OS.WINDOWS, OS.LINUX, OS.WINDOWS}) // 맥, 윈도우, 리눅스에서 활성화
+    @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_9, JRE.JAVA_10, JRE.JAVA_11}) // 자바 버전 별 enable 처리
+    @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
+    void create_new_study_again2() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        Study actual = new Study(100);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
+    /**
+     * Enabled --> 요 처리는 Test class의 전체 @Test들을 돌릴 때 적용되는 거임.
+     */
+    @Test
+    @DisplayName("얘는 실행 안함")
+    @EnabledOnOs(OS.OTHER)
+    @EnabledOnJre(JRE.OTHER)
+    @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "seungmoo")
+    void do_not_run() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        Study actual = new Study(100);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
 
     /**
      * @BeforeAll 클래스 안에 있는 테스트가 실행되기 전에 딱 한번 실행
