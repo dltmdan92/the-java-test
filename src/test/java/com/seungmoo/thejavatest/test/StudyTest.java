@@ -2,6 +2,8 @@ package com.seungmoo.thejavatest.test;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
 
@@ -154,6 +156,30 @@ class StudyTest {
         System.out.println(test_env);
         Study actual = new Study(100);
         assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
+    /**
+     * 테스트 반복하기
+     */
+    @DisplayName("반복해서 스터디 만들기")
+    // @RepeatedTest 을 통해 총 반복 횟수, 각 반복 스텝 별 Name을 만들어 준다.
+    @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition} / {totalRepetition}")
+    void repeatTest(RepetitionInfo repetitionInfo) {
+        // RepetitionInfo 를 파라미터로 받아서
+        // 현재 반복 횟수와 총 반복 횟수를 구할 수 있다.
+        System.out.println("test " + repetitionInfo.getCurrentRepetition() + "/" + repetitionInfo.getTotalRepetitions());
+    }
+
+    /**
+     * 파라미터의 갯수 만큼 실행되는 테스트
+     * 정의된 ValueSource의 파라미터 별로, Test 메서드의 파라미터가 달라진다.
+     * @param message
+     */
+    @DisplayName("파라미터 갯수 만큼 반복해서 스터디 만들기")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @ValueSource(strings = {"날씨가", "많이", "추워지고", "있네요."})
+    void parameterizedTest(String message) {
+        System.out.println(message);
     }
 
     /**R
