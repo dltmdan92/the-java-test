@@ -134,9 +134,10 @@ class StudyTest {
      * intellij 에서 edit configuration에서 tags에 실행할 tag name을 셋팅해주면
      * 그것만 실행해준다.
      */
-    @Test
+    //@Test
     @DisplayName("스터디 만들기 with fast tag")
-    @Tag("fast") // 태깅
+    //@Tag("fast") // 태깅
+    @FastTest // Composed 애노테이션을 사용해주는 것이 좋다.
     void create_new_study_with_fast_tag() {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
@@ -144,9 +145,10 @@ class StudyTest {
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
 
-    @Test
+    //@Test
     @DisplayName("스터디 만들기 with slow tag")
-    @Tag("slow") // 태깅
+    //@Tag("slow") // 태깅
+    @SlowTest
     void create_new_study_with_slow_tag() {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
@@ -154,7 +156,7 @@ class StudyTest {
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
 
-    /**
+    /**R
      * @BeforeAll 클래스 안에 있는 테스트가 실행되기 전에 딱 한번 실행
      * static void로 작성해야 됨.
      */
