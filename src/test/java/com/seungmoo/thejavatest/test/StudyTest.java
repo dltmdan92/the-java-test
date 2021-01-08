@@ -2,8 +2,17 @@ package com.seungmoo.thejavatest.test;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.aggregator.AggregateWith;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregationException;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
+import org.junit.jupiter.params.converter.ArgumentConversionException;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.converter.SimpleArgumentConverter;
+import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Convert;
 
 import java.time.Duration;
 
@@ -173,13 +182,51 @@ class StudyTest {
     /**
      * 파라미터의 갯수 만큼 실행되는 테스트
      * 정의된 ValueSource의 파라미터 별로, Test 메서드의 파라미터가 달라진다.
+     *
+     * 메서드에 인자 여러개 넣으려면 @CvsSource
      * @param message
      */
     @DisplayName("파라미터 갯수 만큼 반복해서 스터디 만들기")
     @ParameterizedTest(name = "{index} {displayName} message={0}")
     @ValueSource(strings = {"날씨가", "많이", "추워지고", "있네요."})
+    @EmptySource // 비어 있는 문자열 파라미터로 테스트 한번 더 추가
+    @NullSource // null 파라미터로 테스트 한번 더 추가
+    @NullAndEmptySource // @EmptySource + @NullSource Componsed Annotation
     void parameterizedTest(String message) {
         System.out.println(message);
+    }
+
+    @DisplayName("인자 변환 테스트")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @ValueSource(ints = {10, 20, 40})
+    void 인자_변환_테스트(@ConvertWith(StudyConveter.class) Study study) {
+        // 인자 값을 변환 해주는 interface가 존재하기 때문에 이렇게 사용가능하다.
+        System.out.println(study.getLimit());
+    }
+
+    static class StudyConveter extends SimpleArgumentConverter {
+        @Override
+        protected Object convert(Object o, Class<?> aClass) throws ArgumentConversionException {
+            assertEquals(Study.class, aClass, "Can only convert to Study");
+            return new Study(Integer.parseInt(o.toString()));
+        }
+    }
+
+    @DisplayName("여러 인자 테스트")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @CsvSource({"10, '자바 스터디'", "20, 스프링"})
+    //void 여러_인자_테스트(Integer limit, String name) {
+    void 여러_인자_테스트(@AggregateWith(StudyAggregator.class) Study study) {
+        // 인자 값을 변환 해주는 interface가 존재하기 때문에 이렇게 사용가능하다.
+        System.out.println(study);
+    }
+
+    // aggregator는 반드시 public class 또는 static inner class 이어야 한다.
+    static class StudyAggregator implements ArgumentsAggregator {
+        @Override
+        public Object aggregateArguments(ArgumentsAccessor argumentsAccessor, ParameterContext parameterContext) throws ArgumentsAggregationException {
+            return new Study(argumentsAccessor.getInteger(0), argumentsAccessor.getString(1));
+        }
     }
 
     /**R
