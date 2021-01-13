@@ -23,9 +23,12 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 // 클래스 내 모든 메소드에 displayName 생성 strategy를 적용한다.
 // ReplaceUnderscores.class : underscore를 공백으로
-// 이거 보다는 @DisplayName 방식을 추천한다.
+// 이거 보다는 @DisplayName 방식을 추천한다. 이거 보다는 @DisplauName이 더 우선순위를 가짐.
+// junit-platform.properties 에서 junit.jupiter.displayname.generator.default = org.junit.jupiter.api.DisplayNameGenerator$ReplaceUnderscores로 대체 할 수 있다.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS) // JUnit5 부터 테스트 인스턴스를 class 당 만들 수 있다.
+// JUnit5 부터 테스트 인스턴스를 class 당 만들 수 있다.
+// junit-platform.properties에서도 셋팅 해줄 수 있음
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 // @Order라는 annotation을 통해 Test 코드의 실행 순서를 정해줄 수 있다.
 // PER_CLASS와 같이 사용하게 되면 "상태값을 유지"하면서 순서대로 테스트 할 수 있다.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -138,7 +141,7 @@ class StudyTest {
     }
 
     @Test
-    @DisplayName("환경 별 enable 처리")
+    @DisplayName("환경_별_enable_처리")
     @EnabledOnOs({OS.WINDOWS, OS.LINUX, OS.WINDOWS}) // 맥, 윈도우, 리눅스에서 활성화
     @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_9, JRE.JAVA_10, JRE.JAVA_11}) // 자바 버전 별 enable 처리
     @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
@@ -223,7 +226,7 @@ class StudyTest {
         System.out.println(message);
     }
 
-    @DisplayName("인자 변환 테스트")
+    //@DisplayName("인자 변환 테스트")
     @ParameterizedTest(name = "{index} {displayName} message={0}")
     @ValueSource(ints = {10, 20, 40})
     void 인자_변환_테스트(@ConvertWith(StudyConveter.class) Study study) {
