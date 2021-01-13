@@ -26,6 +26,9 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 // 이거 보다는 @DisplayName 방식을 추천한다.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS) // JUnit5 부터 테스트 인스턴스를 class 당 만들 수 있다.
+// @Order라는 annotation을 통해 Test 코드의 실행 순서를 정해줄 수 있다.
+// PER_CLASS와 같이 사용하게 되면 "상태값을 유지"하면서 순서대로 테스트 할 수 있다.
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StudyTest {
 
     // 테스트 클래스에서 멤버변수를 선언하고 각 @Test 코드에서 멤버변수를 변경해도
@@ -50,6 +53,7 @@ class StudyTest {
     @Test
     @DisplayName("스터디 만들기 \uD83D\uDE31") // 메소드에 DisplayName을 직접 설정 가능하다.
     @Tag("slow")
+    @Order(1) // junit의 @Order를 써야 함.
     void create_new_study() {
         // 테스트 클래스 내의 각각의 this들은 모두 다르다.
         // 테스트 간의 의존성을 없애기 위해서
@@ -107,6 +111,7 @@ class StudyTest {
     //@Disabled // disable 처리
     @DisplayName("스터기 또 만들기 ╯°□°）╯")
     @Tag("slow")
+    @Order(2)
     void create_new_study_again() {
         System.out.println(this);
         // System 통해서 환경 변수 꺼내기
@@ -138,6 +143,7 @@ class StudyTest {
     @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_9, JRE.JAVA_10, JRE.JAVA_11}) // 자바 버전 별 enable 처리
     @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
     @Tag("slow")
+    @Order(3)
     void create_new_study_again2() {
         System.out.println(this);
         String test_env = System.getenv("TEST_ENV");
