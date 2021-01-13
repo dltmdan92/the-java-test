@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 // junit-platform.properties 에서 junit.jupiter.displayname.generator.default = org.junit.jupiter.api.DisplayNameGenerator$ReplaceUnderscores로 대체 할 수 있다.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 // JUnit5 부터 테스트 인스턴스를 class 당 만들 수 있다.
-// junit-platform.properties에서도 셋팅 해줄 수 있음
+// junit-platform.properties에서도 셋팅 해줄 수 있음 junit.jupiter.testinstance.lifecycle.default = per_class
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 // @Order라는 annotation을 통해 Test 코드의 실행 순서를 정해줄 수 있다.
 // PER_CLASS와 같이 사용하게 되면 "상태값을 유지"하면서 순서대로 테스트 할 수 있다.
