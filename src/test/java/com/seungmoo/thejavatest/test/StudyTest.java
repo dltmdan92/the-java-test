@@ -25,7 +25,23 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 // ReplaceUnderscores.class : underscore를 공백으로
 // 이거 보다는 @DisplayName 방식을 추천한다.
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // JUnit5 부터 테스트 인스턴스를 class 당 만들 수 있다.
 class StudyTest {
+
+    // 테스트 클래스에서 멤버변수를 선언하고 각 @Test 코드에서 멤버변수를 변경해도
+    // 각각 의 테스트는 별개 인스턴스가 생성되어 실행되므로, 의존되지 않고 독립적으로 실행된다. (각 테스트 코드 간 영향 X)
+    // But, JUnit5에서는 @TestInstance(Lifecycle.PER_CLASS) --> 이렇게 테스트 메소드가 하나의 인스턴스를 공유할 수 있게 해준다.
+    int value = 10;
+
+    /**
+     * @TestInstance(TestInstance.Lifecycle.PER_CLASS) 가 적용된 테스트 클래스의 경우
+     * @BeforeAll, @AfterAll 코드는 더이상 static이 필요가 없게 된다.
+     * 첫 인스턴스가 생성 후 공유 되기 때문
+     */
+    @BeforeAll
+    void beforeAll2() {
+        System.out.println("before Test");
+    }
 
     /**
      * JUnit5 부터는 public 안붙여도 된다.
@@ -35,8 +51,11 @@ class StudyTest {
     @DisplayName("스터디 만들기 \uD83D\uDE31") // 메소드에 DisplayName을 직접 설정 가능하다.
     @Tag("slow")
     void create_new_study() {
-
-        Study study = new Study(10);
+        // 테스트 클래스 내의 각각의 this들은 모두 다르다.
+        // 테스트 간의 의존성을 없애기 위해서
+        // But JUnit5에서
+        System.out.println(this);
+        Study study = new Study(value++);
         study.setStatus(StudyStatus.DRAFT);
 
         // 코드를 실행했을 때, 내가 기대하는 Exception이 발생하는지 테스트
@@ -64,7 +83,7 @@ class StudyTest {
          * Thread.sleep(3000)을 걸어놨으면 3000 millis가 끝날 때 까지 테스트가 대기함.
          */
         assertTimeout(Duration.ofMillis(100), () -> {
-            new Study(10);
+            new Study(value++);
             Thread.sleep(300);
         });
 
@@ -76,7 +95,7 @@ class StudyTest {
          * 트랜잭션이 설정된 쓰레드와는 별개의 쓰레드에서 실행될 수 있다.
          */
         assertTimeoutPreemptively(Duration.ofMillis(100), () -> {
-            new Study(10);
+            new Study(value);
             Thread.sleep(300);
         });
 
@@ -89,6 +108,7 @@ class StudyTest {
     @DisplayName("스터기 또 만들기 ╯°□°）╯")
     @Tag("slow")
     void create_new_study_again() {
+        System.out.println(this);
         // System 통해서 환경 변수 꺼내기
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
@@ -103,7 +123,7 @@ class StudyTest {
 
         assumingThat("seungmoo".equalsIgnoreCase(test_env), () -> {
             System.out.println("seungmoo");
-            Study actual = new Study(10);
+            Study actual = new Study(value++);
             assertThat(actual.getLimit()).isGreaterThan(0);
         });
 
@@ -119,6 +139,7 @@ class StudyTest {
     @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
     @Tag("slow")
     void create_new_study_again2() {
+        System.out.println(this);
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         Study actual = new Study(100);
