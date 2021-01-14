@@ -29,6 +29,16 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
+        본 스프링부트 버전에서는 JUnit vintage 없이 JUnit Jupiter만 선언되서 JUnit5 만 쓸 수 있음.
+        junit4를 쓰기 위해서 어쩔 수 없이 vintage를 pom.xml에 선언했음
+        -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
