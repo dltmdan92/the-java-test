@@ -2,7 +2,9 @@ package com.seungmoo.thejavatest.test;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.AggregateWith;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
@@ -32,7 +34,15 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 // @Order라는 annotation을 통해 Test 코드의 실행 순서를 정해줄 수 있다.
 // PER_CLASS와 같이 사용하게 되면 "상태값을 유지"하면서 순서대로 테스트 할 수 있다.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+// Extension 선언적인 등록, 매번 사용할 때 마다 FindSlowTestExtension의 THRESHOLD를 넣어줘야 하는데
+// 이렇게 쓰면 못 넣어준다. (Extension의 생성자를 통해서 인스턴스 만드는데 이걸 컨트롤 하지 못함.)
+//@ExtendWith(FindSlowTestExtension.class) // 안 좋은 방법
 class StudyTest {
+
+    // Extension을 이렇게 등록해주는 게 좋다. (생성자를 컨트롤 해줄 수 있음)
+    // junit.jupiter.extensions.autodetection.enabled = true 로 하면 @RegisterExtension 생략할 수 있다. 규격 맞춰서 만들어줘야함
+    @RegisterExtension
+    static FindSlowTestExtension findSlowTestExtension = new FindSlowTestExtension(1000l);
 
     // 테스트 클래스에서 멤버변수를 선언하고 각 @Test 코드에서 멤버변수를 변경해도
     // 각각 의 테스트는 별개 인스턴스가 생성되어 실행되므로, 의존되지 않고 독립적으로 실행된다. (각 테스트 코드 간 영향 X)
