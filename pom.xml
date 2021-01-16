@@ -30,6 +30,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
         <!--
         본 스프링부트 버전에서는 JUnit vintage 없이 JUnit Jupiter만 선언되서 JUnit5 만 쓸 수 있음.
         junit4를 쓰기 위해서 어쩔 수 없이 vintage를 pom.xml에 선언했음
