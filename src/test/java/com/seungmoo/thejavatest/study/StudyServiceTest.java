@@ -6,6 +6,7 @@ import com.seungmoo.thejavatest.test.Study;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -13,8 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Mockito 소개
@@ -264,5 +264,34 @@ class StudyServiceTest {
         assertNotNull(study.getOwner());
         assertEquals(member, study.getOwner());
 
+        /**
+         * Mock 객체 확인 (verify)
+         * Mock 객체가 어떻게 사용이 됐는지 확인할 수 있다.
+         * •	특정 메소드가 특정 매개변수로 몇번 호출 되었는지, 최소 한번은 호출 됐는지, 전혀 호출되지 않았는지
+         * o	Verifying exact number of invocations
+         * •	어떤 순서대로 호출했는지
+         * o	Verification in order
+         * •	특정 시간 이내에 호출됐는지
+         * o	Verification with timeout
+         * •	특정 시점 이후에 아무 일도 벌어지지 않았는지
+         * o	Finding redundant invocations
+         */
+        // memberService의 notify 메서드가 1번 호출 되어야 한다를 선언한 것
+        // 만약에 notify() 메서드를 실행 안했으면, Exception이 난다.
+        verify(memberService, times(1)).notify(study);
+        verify(memberService, times(1)).notify(member);
+
+        // validate 메서드는 절대로 호출됐어선 안된다.
+        verify(memberService, never()).validate(any());
+
+        // verify에서 순서를 정해놀 수 있다. (순서가 바뀌면 Exception 발생)
+        InOrder inOrder = inOrder(memberService);
+        // 먼저 notify(study)가 실행되어야 하고
+        inOrder.verify(memberService).notify(study);
+        // 그 다음에 notify(member)가 실행되어야 함을 명시
+        inOrder.verify(memberService).notify(member);
+
+        // 더 이상 앞으로는 memberService의 액션이 없어야 한다를 명시
+        verifyNoMoreInteractions(memberService);
     }
 }
