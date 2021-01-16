@@ -1,5 +1,7 @@
 package com.seungmoo.thejavatest.test;
 
+import com.seungmoo.thejavatest.member.Member;
+
 public class Study {
 
     private StudyStatus status;
@@ -7,6 +9,7 @@ public class Study {
     private int limit;
 
     private String name;
+    private Member owner;
 
     public Study(int limit, String name) {
         this.limit = limit;
@@ -43,5 +46,13 @@ public class Study {
                 ", limit=" + limit +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public void setOwner(Member member) {
+        this.owner = member;
+    }
+
+    public Member getOwner() {
+        return owner;
     }
 }

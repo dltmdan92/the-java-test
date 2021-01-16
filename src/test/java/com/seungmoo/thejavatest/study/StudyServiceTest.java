@@ -3,6 +3,7 @@ package com.seungmoo.thejavatest.study;
 import com.seungmoo.thejavatest.member.Member;
 import com.seungmoo.thejavatest.member.MemberService;
 import com.seungmoo.thejavatest.test.Study;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -215,7 +216,8 @@ class StudyServiceTest {
         when(memberService.findById(1L)).thenThrow(new RuntimeException());
         // void 메서드 : 1L 로 호출하면 Exception 호출
         doThrow(new IllegalArgumentException()).when(memberService).validate(1L);
-        memberService.validate(1L); // 위의 Stubbing 때문에 예외 발생!!
+        //memberService.validate(1L); // 위의 Stubbing 때문에 예외 발생!!
+        memberService.validate(2L);
 
         // 각각 3번 호출할 때마다, 다르게 Stubbing 해준다.
         when(memberService.findById(any()))
@@ -234,6 +236,33 @@ class StudyServiceTest {
 
         // 세 번째 호출
         assertEquals(Optional.empty(), memberService.findById(3L));
+
+    }
+
+    @DisplayName("스터빙 연습문제")
+    @Test
+    void studyMockitoStubbing(@Mock MemberService memberService,
+                              @Mock StudyRepository studyRepository) {
+
+        StudyService studyService = new StudyService(memberService, studyRepository);
+
+        Study study = new Study(10, "테스트");
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("seungmoo@email.com");
+
+        // TODO memberService 객체에 findById 메소드를 1L 값으로 호출하면 Optional.of(member) 객체를 리턴하도록 Stubbing
+        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+
+        // TODO studyRepository 객체에 save 메소드를 study 객체로 호출하면 study 객체 그대로 리턴하도록 Stubbing
+        when(studyRepository.save(study)).thenReturn(study);
+
+        // 여기서 위의 Stubbing이 돌아야 createNewStudy에서 findById 메서드 돌렸을 때 객체가 리턴될 것임.
+        studyService.createNewStudy(1L, study);
+
+        assertNotNull(study.getOwner());
+        assertEquals(member, study.getOwner());
 
     }
 }
