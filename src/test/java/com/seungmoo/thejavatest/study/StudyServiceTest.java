@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.*;
  *
  */
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class StudyServiceTest {
 
     // 클래스에서 MockitoExtenseion을 선언해주고 @Mock annotation을 셋팅하면 Mock 객체를 선언할 수 있다.
