@@ -14,6 +14,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 /**
@@ -293,5 +295,52 @@ class StudyServiceTest {
 
         // 더 이상 앞으로는 memberService의 액션이 없어야 한다를 명시
         verifyNoMoreInteractions(memberService);
+    }
+
+    /**
+     * Mockito BDD 스타일 API
+     * BDD: 애플리케이션이 어떻게 “행동”해야 하는지에 대한 공통된 이해를 구성하는 방법으로, TDD에서 창안했다.
+     *
+     * 행동에 대한 스팩
+     * •	Title
+     * •	Narrative
+     *      o	As a  / I want / so that
+     * •	Acceptance criteria
+     *      o	Given / When / Then
+     *
+     * Mockito는 BddMockito라는 클래스를 통해 BDD 스타일의 API를 제공한다.
+     */
+    @Test
+    void createNewStudy(@Mock MemberService memberService,
+                        @Mock StudyRepository studyRepository) {
+        // Given
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("seungmoo@email.com");
+
+        Study study = new Study(10, "테스트");
+
+        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+        when(studyRepository.save(study)).thenReturn(study);
+
+        // when 대신에 BDD의 given을 사용할 수도 있다. (BDDMockito의 given을 사용하면 간단하게 작업할 수 있다.)
+        given(memberService.findById(1L)).willReturn(Optional.of(member));
+        given(studyRepository.save(study)).willReturn(study);
+
+        // When
+        studyService.createNewStudy(1L, study);
+
+        // Then
+        assertEquals(member, study.getOwner());
+        verify(memberService, times(1)).notify(study);
+        // verify를 BDD의 then으로 만들어보자, BDDMockito의 then을 사용한다.
+        then(memberService).should(times(1)).notify(study);
+
+        verifyNoMoreInteractions(memberService);
+        // verifyNoMoreInteractions --> BDD의 then으로 사용
+        then(memberService).shouldHaveNoMoreInteractions();
     }
 }
