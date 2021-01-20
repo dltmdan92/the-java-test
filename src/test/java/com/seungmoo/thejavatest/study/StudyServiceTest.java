@@ -3,6 +3,7 @@ package com.seungmoo.thejavatest.study;
 import com.seungmoo.thejavatest.member.Member;
 import com.seungmoo.thejavatest.member.MemberService;
 import com.seungmoo.thejavatest.test.Study;
+import com.seungmoo.thejavatest.test.StudyStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -343,4 +344,33 @@ class StudyServiceTest {
         // verifyNoMoreInteractions --> BDD의 then으로 사용
         then(memberService).shouldHaveNoMoreInteractions();
     }
+
+    /**
+     * BDD 연습문제를 풀어보자
+     * @param memberService
+     * @param studyRepository
+     */
+    @DisplayName("다른 사용자가 볼 수 있도록 스터디를 공개한다.")
+    @Test
+    void openStudy(@Mock MemberService memberService,
+                   @Mock StudyRepository studyRepository) {
+        // Given
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        Study study = new Study(10, "더 자바, 테스트");
+        // TODO studyRepository Mock 객체의 save 메소드를호출 시 study를 리턴하도록 만들기.
+        assertNull(study.getOpenedDateTime());
+        given(studyRepository.save(study)).willReturn(study);
+
+        // When
+        studyService.openStudy(study);
+
+        // Then
+        // TODO study의 status가 OPENED로 변경됐는지 확인
+        assertEquals(StudyStatus.OPENED, study.getStatus());
+        // TODO study의 openedDataTime이 null이 아닌지 확인
+        assertNotNull(study.getOpenedDateTime());
+        // TODO memberService의 notify(study)가 호출 됐는지 확인.
+        then(memberService).should(times(1)).notify(study);
+    }
+
 }

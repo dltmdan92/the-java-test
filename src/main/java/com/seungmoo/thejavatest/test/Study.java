@@ -2,6 +2,8 @@ package com.seungmoo.thejavatest.test;
 
 import com.seungmoo.thejavatest.member.Member;
 
+import java.time.LocalDateTime;
+
 public class Study {
 
     private StudyStatus status;
@@ -10,6 +12,7 @@ public class Study {
 
     private String name;
     private Member owner;
+    private LocalDateTime openedDateTime;
 
     public Study(int limit, String name) {
         this.limit = limit;
@@ -54,5 +57,14 @@ public class Study {
 
     public Member getOwner() {
         return owner;
+    }
+
+    public void open() {
+        this.openedDateTime = LocalDateTime.now();
+        this.status = StudyStatus.OPENED;
+    }
+
+    public LocalDateTime getOpenedDateTime() {
+        return openedDateTime;
     }
 }
