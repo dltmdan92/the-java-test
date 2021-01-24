@@ -15,11 +15,15 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
+import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +50,7 @@ public class StudyServiceTest2 {
     @Autowired
     Environment environment;*/
 
+
     @Value("${container.port}")
     int port;
 
@@ -56,6 +61,7 @@ public class StudyServiceTest2 {
 
     // 일반적인 컨테이너 만들기
     // 위의 DB Container의 DB 특화된 메서드는 제공되지 않는다. withEnv로 충분히 확장 사용 가능하다.
+    /*
     @Container
     static GenericContainer postgreSQLContainer = new GenericContainer("postgres")
             .withEnv("POSTGRES_DB", "springdata_test")
@@ -66,6 +72,13 @@ public class StudyServiceTest2 {
             .withExposedPorts(5432)
             ;
 
+     */
+
+    // Docker compose 를 사용해보자
+    // Multiple한 Docker container들의 사용을 필요로 할 때 (컨테이너의 실행 순서 등을 셋팅해줄 수 있다.)
+    @Container
+    static DockerComposeContainer composeContainer = new DockerComposeContainer(new File("src/test/resources/docker-compose.yml"));
+
    // 테스트 시작할 때 컨테이너를 띄움.
    @BeforeAll
    static void beforeAll() {
@@ -73,17 +86,18 @@ public class StudyServiceTest2 {
         * 주의 할 점. postgresContainer를 띄울 때 컨테이너의 엔드포인트를 명시해줘야 한다. (DB url 등 properties에 있는 DB 정보 명시)
         * 명시 안해주면 자기 맘대로 아무데서나 띄워지기 때문에 테스트 수행이 불가함.
         */
-       postgreSQLContainer.start();
+       composeContainer.start();
        //System.out.println(postgreSQLContainer.getJdbcUrl());
 
        Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(log);
-       postgreSQLContainer.followOutput(logConsumer);
+       //postgreSQLContainer.followOutput(logConsumer);
+       composeContainer.withLogConsumer("study-db", logConsumer);
    }
 
    // 테스트 종료될 때 컨테이너를 내림.
    @AfterAll
    static void afterAll() {
-       postgreSQLContainer.stop();
+       composeContainer.stop();
    }
 
    @BeforeEach
@@ -92,7 +106,7 @@ public class StudyServiceTest2 {
        //System.out.println(postgreSQLContainer.getMappedPort(5432));
        //System.out.println(environment.getProperty("container.port"));
        System.out.println(port);
-       System.out.println(postgreSQLContainer.getLogs());
+       //System.out.println(postgreSQLContainer.getLogs());=
 
        // 각각의 테스트 시작할 떄마다 데이터 delete 해준다.
        studyRepository.deleteAll();
@@ -141,7 +155,15 @@ public class StudyServiceTest2 {
             // test properties를 셋팅하는 법, ","로 여러개 정의 가능하다.
             // getMappedPort에서 Mapped port can only be obtained after the container is started Exception이 계속 발생했음
             // @SpringBootTest 애노테이션 없애니까 Exception 발생하지 않게됨..
+            /*
             TestPropertyValues.of("container.port="+postgreSQLContainer.getMappedPort(5432))
+                    // environment에 test properties를 apply 해준다.
+                    .applyTo(configurableApplicationContext.getEnvironment());
+
+             */
+
+            // 특정 서비스의 mappedPort를 구한다.
+            TestPropertyValues.of("container.port="+composeContainer.getServicePort("study-db", 5432))
                     // environment에 test properties를 apply 해준다.
                     .applyTo(configurableApplicationContext.getEnvironment());
         }

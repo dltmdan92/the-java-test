@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  springdata_test:
+    image: postgres
+    ports:
+      - 5432
+    environment:
+      POSTGRES_PASSWORD: 1568919am!
+      POSTGRES_USER: seungmoo
+      POSTGRES_DB: springdata_test
+
+    
