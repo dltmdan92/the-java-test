@@ -11,5 +11,5 @@ services:
       environment:
         POSTGRES_PASSWORD: "1568919am!"
         POSTGRES_USER: "seungmoo"
-        POSTGRES_DB: "springdata_test"
+        POSTGRES_DB: "springdata"
 

@@ -1,0 +1,17 @@
+# 테스트용 docker-compose.yml
+# 여기서 포트매핑 시, 운영의 5432:5432와 충돌날 수 있다.
+# 여기서는 container port(서비스 포트)만 셋팅해주도록 한다. (호스트 포트 매핑 X)
+
+version: "3"
+
+services:
+  study-db-test:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: "1568919am!"
+      POSTGRES_USER: "seungmoo"
+      POSTGRES_DB: "springdata"
+
+    

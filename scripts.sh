@@ -3,7 +3,7 @@
 # 단점 : 테스트가 느려진다.
 
 ## 개발용 DB
-docker run -p 5432:5432 --name springdata_dev -e POSTGRES_USER=seungmoo -e POSTGRES_PASSWORD=1568919am! -e POSTGRES_DB=springdata_dev -d postgres
+docker run -p 5432:5432 --name springdata -e POSTGRES_USER=seungmoo -e POSTGRES_PASSWORD=1568919am! -e POSTGRES_DB=springdata -d postgres
 
 ## 테스트용 DB
-docker run -p 15432:5432 --name springdata_test -e POSTGRES_USER=seungmoo -e POSTGRES_PASSWORD=1568919am! -e POSTGRES_DB=springdata_test -d postgres
+docker run -p 15432:5432 --name springdata-test -e POSTGRES_USER=seungmoo -e POSTGRES_PASSWORD=1568919am! -e POSTGRES_DB=springdata_test -d postgres
