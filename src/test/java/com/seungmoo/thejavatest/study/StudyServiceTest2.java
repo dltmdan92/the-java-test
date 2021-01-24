@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -77,7 +78,8 @@ public class StudyServiceTest2 {
     // Docker compose 를 사용해보자
     // Multiple한 Docker container들의 사용을 필요로 할 때 (컨테이너의 실행 순서 등을 셋팅해줄 수 있다.)
     @Container
-    static DockerComposeContainer composeContainer = new DockerComposeContainer(new File("src/test/resources/docker-compose.yml"));
+    static DockerComposeContainer composeContainer = new DockerComposeContainer(new File("src/test/resources/docker-compose.yml"))
+            .withExposedService("study-db-test", 5432);
 
    // 테스트 시작할 때 컨테이너를 띄움.
    @BeforeAll
@@ -91,7 +93,7 @@ public class StudyServiceTest2 {
 
        Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(log);
        //postgreSQLContainer.followOutput(logConsumer);
-       composeContainer.withLogConsumer("study-db", logConsumer);
+       composeContainer.withLogConsumer("study-db-test", logConsumer);
    }
 
    // 테스트 종료될 때 컨테이너를 내림.
@@ -163,7 +165,7 @@ public class StudyServiceTest2 {
              */
 
             // 특정 서비스의 mappedPort를 구한다.
-            TestPropertyValues.of("container.port="+composeContainer.getServicePort("study-db", 5432))
+            TestPropertyValues.of("container.port="+composeContainer.getServicePort("study-db-test", 5432))
                     // environment에 test properties를 apply 해준다.
                     .applyTo(configurableApplicationContext.getEnvironment());
         }

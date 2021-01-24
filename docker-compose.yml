@@ -5,8 +5,8 @@ services:
     image: postgres
     ports:
       - 5432
-    environment:
-      POSTGRES_PASSWORD: study
-      POSTGRES_USER: study
-      POSTGRES_DB: springdata_test
+      environment:
+        POSTGRES_PASSWORD: "1568919am!"
+        POSTGRES_USER: "seungmoo"
+        POSTGRES_DB: "springdata_test"
 
