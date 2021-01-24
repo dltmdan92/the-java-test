@@ -8,15 +8,15 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -30,10 +30,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @Slf4j
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @Testcontainers
+@ContextConfiguration(initializers = StudyServiceTest2.ContainerPropertyInitializer.class)
 public class StudyServiceTest2 {
 
     @Mock
@@ -41,6 +41,13 @@ public class StudyServiceTest2 {
 
     @Mock
     StudyRepository studyRepository;
+
+    /*
+    @Autowired
+    Environment environment;*/
+
+    @Value("${container.port}")
+    int port;
 
     // static으로 안만들 경우, 클래스 내의 모든 테스트마다 container를 생성하게 된다.
     // dockerImageName 넣는 부분은 좀 더 봐야함. 기존에 도커에 생성된 image 이름을 넣어줘야 하나봄. (호환되게 끔)
@@ -82,14 +89,16 @@ public class StudyServiceTest2 {
    @BeforeEach
    void beforeEach() {
        System.out.println("==========");
-       System.out.println(postgreSQLContainer.getMappedPort(5432));
+       //System.out.println(postgreSQLContainer.getMappedPort(5432));
+       //System.out.println(environment.getProperty("container.port"));
+       System.out.println(port);
        System.out.println(postgreSQLContainer.getLogs());
 
        // 각각의 테스트 시작할 떄마다 데이터 delete 해준다.
        studyRepository.deleteAll();
    }
 
-   @DisplayName("testContainers를 사용해서 도커 자동으로 띄워봅시다.")
+    @DisplayName("testContainers를 사용해서 도커 자동으로 띄워봅시다.")
     @Test
     void createNewStudy() {
         System.out.println("testcontainer를 사용해서 도커 컨테이너 자동으로 띄우기 성공!!!");
@@ -123,5 +132,18 @@ public class StudyServiceTest2 {
         //verifyNoMoreInteractions(memberService);
         // verifyNoMoreInteractions --> BDD의 then으로 사용
         then(memberService).shouldHaveNoMoreInteractions();
+    }
+
+    static class ContainerPropertyInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+        @Override
+        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            // test properties를 셋팅하는 법, ","로 여러개 정의 가능하다.
+            // getMappedPort에서 Mapped port can only be obtained after the container is started Exception이 계속 발생했음
+            // @SpringBootTest 애노테이션 없애니까 Exception 발생하지 않게됨..
+            TestPropertyValues.of("container.port="+postgreSQLContainer.getMappedPort(5432))
+                    // environment에 test properties를 apply 해준다.
+                    .applyTo(configurableApplicationContext.getEnvironment());
+        }
     }
 }
