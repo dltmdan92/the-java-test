@@ -266,8 +266,8 @@ class StudyServiceTest {
         // 여기서 위의 Stubbing이 돌아야 createNewStudy에서 findById 메서드 돌렸을 때 객체가 리턴될 것임.
         studyService.createNewStudy(1L, study);
 
-        assertNotNull(study.getOwner());
-        assertEquals(member, study.getOwner());
+        assertNotNull(study.getOwnerId());
+        assertEquals(member.getId(), study.getOwnerId());
 
         /**
          * Mock 객체 확인 (verify)
@@ -337,12 +337,13 @@ class StudyServiceTest {
         studyService.createNewStudy(1L, study);
 
         // Then
-        assertEquals(member, study.getOwner());
-        verify(memberService, times(1)).notify(study);
+        assertEquals(member.getId(), study.getOwnerId());
+        //verify(memberService, times(1)).notify(study);
         // verify를 BDD의 then으로 만들어보자, BDDMockito의 then을 사용한다.
         then(memberService).should(times(1)).notify(study);
+        then(memberService).should(times(1)).notify(member);
 
-        verifyNoMoreInteractions(memberService);
+        //verifyNoMoreInteractions(memberService);
         // verifyNoMoreInteractions --> BDD의 then으로 사용
         then(memberService).shouldHaveNoMoreInteractions();
     }

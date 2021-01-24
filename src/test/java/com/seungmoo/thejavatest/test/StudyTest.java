@@ -90,7 +90,7 @@ class StudyTest {
                 () -> assertNotNull(study),
                 () -> assertEquals(StudyStatus.DRAFT, study.getStatus(),
                         () -> "스터디를 처음 만들면 상태값이 "+ StudyStatus.DRAFT +"여야 한다."),
-                () -> assertTrue(study.getLimit() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 한다."),
+                () -> assertTrue(study.getLimitCount() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 한다."),
                 () -> assertEquals(message, "limit는 0보다 커야 한다.")
         );
 
@@ -136,17 +136,17 @@ class StudyTest {
         assumingThat("LOCAL".equalsIgnoreCase(test_env), () -> {
             System.out.println("local");
             Study actual = new Study(100);
-            assertThat(actual.getLimit()).isGreaterThan(0);
+            assertThat(actual.getLimitCount()).isGreaterThan(0);
         });
 
         assumingThat("seungmoo".equalsIgnoreCase(test_env), () -> {
             System.out.println("seungmoo");
             Study actual = new Study(value++);
-            assertThat(actual.getLimit()).isGreaterThan(0);
+            assertThat(actual.getLimitCount()).isGreaterThan(0);
         });
 
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
         System.out.println("create1");
     }
 
@@ -162,7 +162,7 @@ class StudyTest {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         Study actual = new Study(100);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     /**
@@ -178,7 +178,7 @@ class StudyTest {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         Study actual = new Study(100);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     /**
@@ -193,7 +193,7 @@ class StudyTest {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         Study actual = new Study(100);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     //@Test
@@ -204,7 +204,7 @@ class StudyTest {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         Study actual = new Study(100);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     /**
@@ -241,7 +241,7 @@ class StudyTest {
     @ValueSource(ints = {10, 20, 40})
     void 인자_변환_테스트(@ConvertWith(StudyConveter.class) Study study) {
         // 인자 값을 변환 해주는 interface가 존재하기 때문에 이렇게 사용가능하다.
-        System.out.println(study.getLimit());
+        System.out.println(study.getLimitCount());
     }
 
     static class StudyConveter extends SimpleArgumentConverter {

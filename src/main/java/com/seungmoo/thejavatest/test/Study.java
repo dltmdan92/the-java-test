@@ -1,21 +1,36 @@
 package com.seungmoo.thejavatest.test;
 
-import com.seungmoo.thejavatest.member.Member;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
+@Entity
+@Getter @Setter @NoArgsConstructor
 public class Study {
 
-    private StudyStatus status;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    private int limit;
+    @Enumerated
+    private StudyStatus status = StudyStatus.DRAFT;
+
+    // 원래 limit였는데 limitCount로 이름 바꾸니까 정상 DDL 정상 실행됨.
+    // 예약어 때문인듯
+    private Integer limitCount;
 
     private String name;
-    private Member owner;
+    private Long ownerId;
     private LocalDateTime openedDateTime;
 
     public Study(int limit, String name) {
-        this.limit = limit;
+        this.limitCount = limit;
         this.name = name;
     }
 
@@ -23,48 +38,11 @@ public class Study {
         if (limit < 0) {
             throw new IllegalArgumentException("limit는 0보다 커야 한다.");
         }
-        this.limit = limit;
-    }
-
-    public StudyStatus getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(StudyStatus status) {
-        this.status = status;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return "Study{" +
-                "status=" + status +
-                ", limit=" + limit +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
-    public void setOwner(Member member) {
-        this.owner = member;
-    }
-
-    public Member getOwner() {
-        return owner;
+        this.limitCount = limit;
     }
 
     public void open() {
         this.openedDateTime = LocalDateTime.now();
         this.status = StudyStatus.OPENED;
-    }
-
-    public LocalDateTime getOpenedDateTime() {
-        return openedDateTime;
     }
 }

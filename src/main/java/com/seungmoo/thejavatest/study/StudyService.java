@@ -22,7 +22,7 @@ public class StudyService {
         if (member.isEmpty()) {
             throw new IllegalArgumentException("Member doesn't exist for id: '" + memberId +"'");
         }
-        study.setOwner(member.orElseThrow(IllegalArgumentException::new));
+        study.setOwnerId(memberId);
         Study newStudy = repository.save(study);
         memberService.notify(newStudy);
         memberService.notify(member.get());

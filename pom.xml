@@ -60,6 +60,22 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
+        testcontainers를 통해, 도커에서 test DB 컨테이너를 자동으로 띄우고 종료하는 것을 실습해본다.
+        -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.15.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- testcontainers에서 제공하는 DB별 모듈은 별도로 설치해야 한다. -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.15.1</version>
+        </dependency>
     </dependencies>
 
     <build>
