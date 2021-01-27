@@ -77,6 +77,30 @@
             <version>1.15.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!--
+        운영 이슈 테스트 : Chaos Monkey와 actuator
+
+        카오스 멍키 활성화를 위해선 반드시 chaos-monkey profile을 줘야 한다.
+        •	spring.profiles.active=chaos-monkey
+        -->
+
+        <!--스프링 부트용 카오스 멍키 제공-->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>chaos-monkey-spring-boot</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <!--
+        •	스프링 부트 운영 툴로, 런타임 중에 카오스 멍키 설정을 변경할 수 있다.
+        •	그밖에도 헬스 체크, 로그 레벨 변경, 매트릭스 데이터 조회 등 다양한 운영 툴로 사용 가능.
+        •	/actuator
+         -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
