@@ -1,4 +1,4 @@
-package com.seungmoo.thejavatest.member;
+package com.seungmoo.thejavatest.domain;
 
 public class Member {
     private long id;

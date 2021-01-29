@@ -1,9 +1,9 @@
 package com.seungmoo.thejavatest.study;
 
-import com.seungmoo.thejavatest.member.Member;
+import com.seungmoo.thejavatest.domain.Member;
 import com.seungmoo.thejavatest.member.MemberService;
-import com.seungmoo.thejavatest.test.Study;
-import com.seungmoo.thejavatest.test.StudyStatus;
+import com.seungmoo.thejavatest.domain.Study;
+import com.seungmoo.thejavatest.domain.StudyStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

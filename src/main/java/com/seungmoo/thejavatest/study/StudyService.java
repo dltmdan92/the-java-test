@@ -1,8 +1,8 @@
 package com.seungmoo.thejavatest.study;
 
-import com.seungmoo.thejavatest.member.Member;
+import com.seungmoo.thejavatest.domain.Member;
 import com.seungmoo.thejavatest.member.MemberService;
-import com.seungmoo.thejavatest.test.Study;
+import com.seungmoo.thejavatest.domain.Study;
 
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package com.seungmoo.thejavatest.study;
 
-import com.seungmoo.thejavatest.test.Study;
+import com.seungmoo.thejavatest.domain.Study;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

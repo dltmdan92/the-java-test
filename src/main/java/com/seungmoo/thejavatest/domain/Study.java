@@ -1,4 +1,4 @@
-package com.seungmoo.thejavatest.test;
+package com.seungmoo.thejavatest.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
